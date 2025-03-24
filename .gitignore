@@ -1,0 +1,20 @@
+# Java, Maven, and IntelliJ files
+target/
+*.class
+*.jar
+*.war
+*.ear
+*.iml
+.idea/
+*.log
+.mvn/
+*.DS_Store
+node_modules/
+
+# Ignore config and sensitive info
+application.properties
+application.yml
+
+# Kafka and Zookeeper logs
+*.log
+*.lock
