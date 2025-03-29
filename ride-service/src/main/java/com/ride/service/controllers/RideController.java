@@ -1,5 +1,6 @@
 package com.ride.service.controllers;
 
+import com.common.model.RideEvent;
 import com.ride.service.entity.Ride;
 import com.ride.service.entity.RideStatus;
 import com.ride.service.services.RideService;

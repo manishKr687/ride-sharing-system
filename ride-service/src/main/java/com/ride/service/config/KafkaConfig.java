@@ -1,6 +1,6 @@
 package com.ride.service.config;
 
-import com.ride.service.kafka.RideEvent;
+import com.common.model.RideEvent;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -15,6 +15,7 @@ import org.springframework.kafka.config.TopicBuilder;
 import org.springframework.kafka.core.*;
 import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
+
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,6 +1,6 @@
 package com.ride.service.services;
 
-import com.ride.service.kafka.RideEvent;
+import com.common.model.RideEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;

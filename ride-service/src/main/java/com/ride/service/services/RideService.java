@@ -1,12 +1,14 @@
 package com.ride.service.services;
 
+import com.common.model.RideEvent;
 import com.ride.service.entity.Ride;
 import com.ride.service.entity.RideStatus;
-import com.ride.service.kafka.RideEvent;
 import com.ride.service.kafka.RideProducer;
 import com.ride.service.repositories.RideRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+
 
 import java.time.LocalDateTime;
 

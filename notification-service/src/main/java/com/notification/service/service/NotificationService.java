@@ -4,6 +4,8 @@ import com.notification.service.entity.Notification;
 import com.notification.service.repository.NotificationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.common.model.RideEvent;
+
 
 import java.util.List;
 
