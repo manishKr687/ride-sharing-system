@@ -1,7 +1,7 @@
 package com.notification.service.config;
 
+import com.common.model.PaymentEvent;
 import com.common.model.RideEvent;
-import jakarta.annotation.PostConstruct;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
@@ -22,7 +22,7 @@ import java.util.Map;
 public class KafkaListenerConfig {
 
     @Bean
-    public ConsumerFactory<String, RideEvent> consumerFactory(KafkaProperties properties) {
+    public ConsumerFactory<String, RideEvent> rideEventConsumerFactory(KafkaProperties properties) {
         Map<String, Object> configProps = new HashMap<>(properties.buildConsumerProperties());
 
         // Configure key and value deserializers
@@ -45,11 +45,44 @@ public class KafkaListenerConfig {
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, RideEvent> kafkaListenerContainerFactory(
+    public ConsumerFactory<String, PaymentEvent> paymentEventConsumerFactory(KafkaProperties properties) {
+        Map<String, Object> configProps = new HashMap<>(properties.buildConsumerProperties());
+
+        // Configure key and value deserializers
+        configProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+        configProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class);
+
+        // Configure ErrorHandlingDeserializer with JsonDeserializer as the delegate
+        configProps.put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, JsonDeserializer.class.getName());
+
+        // Correctly configure trusted packages and default type
+        configProps.put(JsonDeserializer.VALUE_DEFAULT_TYPE, "com.common.model.PaymentEvent");
+        configProps.put(JsonDeserializer.TRUSTED_PACKAGES, "com.common.model");
+
+        // Return DefaultKafkaConsumerFactory with proper deserializer
+        return new DefaultKafkaConsumerFactory<>(
+                configProps,
+                new StringDeserializer(),
+                new ErrorHandlingDeserializer<>(new JsonDeserializer<>(PaymentEvent.class, false))
+        );
+    }
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, RideEvent> rideKafkaListenerContainerFactory(
             KafkaProperties properties) {
         ConcurrentKafkaListenerContainerFactory<String, RideEvent> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(consumerFactory(properties));
+        factory.setConsumerFactory(rideEventConsumerFactory(properties));
+        //factory.setConcurrency(3); // Enables parallel processing
+        return factory;
+    }
+
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, PaymentEvent> paymentKafkaListenerContainerFactory(
+            KafkaProperties properties) {
+        ConcurrentKafkaListenerContainerFactory<String, PaymentEvent> factory =
+                new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(paymentEventConsumerFactory(properties));
+        //factory.setConcurrency(3); // Enables parallel processing
         return factory;
     }
 }

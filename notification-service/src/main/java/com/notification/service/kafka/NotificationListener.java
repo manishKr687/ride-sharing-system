@@ -1,5 +1,6 @@
 package com.notification.service.kafka;
 
+import com.common.model.PaymentEvent;
 import com.common.model.RideEvent;
 import com.notification.service.service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,7 @@ public class NotificationListener {
         this.emailService = emailService;
     }
 
-    @KafkaListener(topics = "ride_event", groupId = "notification-group")
+    @KafkaListener(topics = "ride_event", groupId = "notification-group", containerFactory = "rideKafkaListenerContainerFactory")
     public void listenRideEvents(RideEvent rideEvent) {
         System.out.println("Received Ride Event: " + rideEvent);
 
@@ -47,6 +48,4 @@ public class NotificationListener {
                 System.out.println("Unknown event status received: " + rideEvent.getStatus());
         }
     }
-
-
 }
