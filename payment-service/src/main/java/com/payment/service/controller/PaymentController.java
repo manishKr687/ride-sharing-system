@@ -1,6 +1,6 @@
 package com.payment.service.controller;
 
-import com.payment.service.entity.PaymentRequest;
+import com.payment.service.entity.Payment;
 import com.payment.service.service.PaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,8 +14,8 @@ public class PaymentController {
     @Autowired
     private PaymentService paymentService;
     @PostMapping("")
-    public String sentPaymentRequest(@RequestBody PaymentRequest paymentRequest){
-        paymentService.paymentProcess(paymentRequest);
+    public String sentPaymentRequest(@RequestBody Payment payment){
+        paymentService.paymentProcess(payment);
         return "Payment Request Sent";
     }
 }

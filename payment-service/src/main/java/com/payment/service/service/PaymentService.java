@@ -1,8 +1,9 @@
 package com.payment.service.service;
 
 import com.common.model.PaymentEvent;
-import com.payment.service.entity.PaymentRequest;
+import com.payment.service.entity.Payment;
 import com.payment.service.kafka.PaymentProducer;
+import com.payment.service.repository.PaymentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,16 +13,22 @@ import java.util.Random;
 public class PaymentService {
     @Autowired
     private PaymentProducer paymentProducer;
-    public void paymentProcess(PaymentRequest paymentRequest){
+
+    @Autowired
+    private PaymentRepository paymentRepository;
+    public void paymentProcess(Payment payment){
         //Payment Logic
         boolean paymentStatus = new Random().nextBoolean(); // Simulate Payment Success/Failure
         String status = paymentStatus ? "SUCCESS" : "FAILED";
         String message = paymentStatus ? "Payment Processed Successfully" : "Payment Failed";
 
+        paymentRepository.save(payment);
+
         PaymentEvent paymentEvent = PaymentEvent.builder().
-                userId(paymentRequest.getUserId()).
-                rideId(paymentRequest.getRideId()).
-                amount(paymentRequest.getAmount()).
+                paymentId(payment.getPaymentId()).
+                userId(payment.getUserId()).
+                rideId(payment.getRideId()).
+                amount(payment.getAmount()).
                 status(status).
                 message(message).build();
 

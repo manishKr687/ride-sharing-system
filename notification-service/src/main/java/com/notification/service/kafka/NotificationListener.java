@@ -1,6 +1,6 @@
 package com.notification.service.kafka;
 
-import com.common.model.PaymentEvent;
+
 import com.common.model.RideEvent;
 import com.notification.service.service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
