@@ -2,16 +2,11 @@ pipeline {
     agent any
 
     tools {
-        maven 'Maven 3.9.6'   // Match the Maven name you configured
-        jdk 'JDK17'           // Match the JDK name you configured
+        maven 'Maven 3.9.6'
+        jdk 'JDK17'
     }
 
     stages {
-        stage('Checkout') {
-            steps {
-                git 'https://github.com/manishKr687/ride-sharing-system.git'
-            }
-        }
         stage('Build All Microservices') {
             steps {
                 sh 'mvn clean install -DskipTests'
