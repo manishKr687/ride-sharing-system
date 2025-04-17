@@ -12,9 +12,9 @@ pipeline {
                 git 'https://github.com/manishKr687/ride-sharing-system.git'
             }
         }
-        stage('Build') {
+        stage('Build All Microservices') {
             steps {
-                sh 'mvn clean install'
+                sh 'mvn clean install -DskipTests'
             }
         }
         stage('Test') {
