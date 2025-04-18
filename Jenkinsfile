@@ -4,6 +4,7 @@ pipeline {
     tools { 
         maven 'Apache Maven'
         jdk 'JAVA_HOME'
+		git 'GIT_HOME'
     }
 
     stages {
