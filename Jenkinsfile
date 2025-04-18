@@ -3,13 +3,13 @@ pipeline {
 
     tools {
         maven 'Maven 3.9.6'
-        jdk 'JDK17'
+        jdk 'JDK 20.0.1'
     }
 
     stages {
         stage('Checkout Code') {
             steps {
-                git url: 'https://github.com/manishKr687/ride-sharing-system.git', branch: 'main'
+                checkout scm
             }
         }
 
