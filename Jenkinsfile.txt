@@ -7,6 +7,12 @@ pipeline {
     }
 
     stages {
+        stage('Checkout Code') {
+            steps {
+                checkout scm
+            }
+        }
+
         stage('Build All Microservices') {
             steps {
                 sh 'mvn clean install -DskipTests'
