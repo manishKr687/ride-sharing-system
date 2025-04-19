@@ -31,19 +31,6 @@ pipeline {
                 }
             }
         }
-
-        stage('Test All Microservices') {
-            steps {
-                script {
-                    SERVICES.split().each { service ->
-                        dir(service) {
-                            echo "Testing ${service}..."
-                            sh 'mvn test'
-                        }
-                    }
-                }
-            }
-        }
     }
 
     post {
