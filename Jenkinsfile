@@ -4,14 +4,14 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/your-username/ride-sharing-system.git/'
+                git branch: 'main', url: 'https://github.com/your-real-username/ride-sharing-system.git'
             }
         }
 
         stage('Build Billing Service') {
             steps {
                 dir('billing-service') {
-                    sh 'mvn clean install'
+                    bat 'mvn clean install'
                 }
             }
         }
@@ -19,7 +19,7 @@ pipeline {
         stage('Build Notification Service') {
             steps {
                 dir('notification-service') {
-                    sh 'mvn clean install'
+                    bat 'mvn clean install'
                 }
             }
         }
@@ -27,7 +27,7 @@ pipeline {
         stage('Build Payment Service') {
             steps {
                 dir('payment-service') {
-                    sh 'mvn clean install'
+                    bat 'mvn clean install'
                 }
             }
         }
@@ -35,7 +35,7 @@ pipeline {
         stage('Build Ride Service') {
             steps {
                 dir('ride-service') {
-                    sh 'mvn clean install'
+                    bat 'mvn clean install'
                 }
             }
         }
@@ -43,7 +43,7 @@ pipeline {
         stage('Build User Service') {
             steps {
                 dir('user-service') {
-                    sh 'mvn clean install'
+                    bat 'mvn clean install'
                 }
             }
         }
