@@ -4,7 +4,7 @@ pipeline {
     tools {
         maven 'Apache Maven'
         jdk 'JAVA_HOME'          // match project's Java version
-	git '2.43.0.windows.1'
+	git 'Default'
     }
 
     environment {
