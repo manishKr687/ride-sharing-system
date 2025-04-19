@@ -1,73 +1,51 @@
 pipeline {
     agent any
 
-    tools {
-        maven 'Apache Maven'
-        jdk 'JAVA_HOME'          // match project's Java version
-    }
-
-    environment {
-        PROJECT_DIR = "${WORKSPACE}"
-    }
-
     stages {
-        stage('Checkout Code') {
+        stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/manishKr687/ride-sharing-system.git'
+                git branch: 'main', url: 'https://github.com/your-username/ride-sharing-system.git'
             }
         }
 
-        stage('Build All Microservices') {
+        stage('Build Billing Service') {
             steps {
-                echo 'Building all services...'
-                sh '''
-                cd common-model && mvn clean install
-                cd ../ride-service && mvn clean install
-                cd ../payment-service && mvn clean install
-                cd ../billing-service && mvn clean install
-                cd ../notification-service && mvn clean install
-                '''
+                dir('billing-service') {
+                    sh 'mvn clean install'
+                }
             }
         }
 
-        stage('Unit Tests') {
+        stage('Build Notification Service') {
             steps {
-                echo 'Running unit tests for all services...'
-                sh '''
-                cd common-model && mvn test
-                cd ../ride-service && mvn test
-                cd ../payment-service && mvn test
-                cd ../billing-service && mvn test
-                cd ../notification-service && mvn test
-                '''
+                dir('notification-service') {
+                    sh 'mvn clean install'
+                }
             }
         }
 
-        stage('Package Microservices') {
+        stage('Build Payment Service') {
             steps {
-                echo 'Packaging all services...'
-                sh '''
-                cd ride-service && mvn package
-                cd ../payment-service && mvn package
-                cd ../billing-service && mvn package
-                cd ../notification-service && mvn package
-                '''
+                dir('payment-service') {
+                    sh 'mvn clean install'
+                }
             }
         }
 
-        stage('Archive Artifacts') {
+        stage('Build Ride Service') {
             steps {
-                archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
+                dir('ride-service') {
+                    sh 'mvn clean install'
+                }
             }
         }
-    }
 
-    post {
-        success {
-            echo 'Build and package successful!'
-        }
-        failure {
-            echo 'Build failed. Please check logs.'
+        stage('Build User Service') {
+            steps {
+                dir('user-service') {
+                    sh 'mvn clean install'
+                }
+            }
         }
     }
 }
