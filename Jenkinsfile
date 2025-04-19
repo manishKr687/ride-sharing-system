@@ -7,6 +7,13 @@ pipeline {
                 git branch: 'main', url: 'https://github.com/manishKr687/ride-sharing-system.git'
             }
         }
+        stage('Build Commonn-library Service') {
+            steps {
+                dir('common-library') {
+                    bat 'mvn clean install'
+                }
+            }
+        }
 
         stage('Build Billing Service') {
             steps {
