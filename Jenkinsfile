@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/your-real-username/ride-sharing-system.git'
+                git branch: 'main', url: 'https://github.com/manishKr687/ride-sharing-system.git'
             }
         }
 
