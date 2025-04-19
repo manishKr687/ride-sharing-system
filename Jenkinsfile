@@ -54,5 +54,12 @@ pipeline {
                 }
             }
         }
+        stage('Build Driver Service') {
+            steps {
+                dir('driver-service') {
+                    bat 'mvn clean install'
+                }
+            }
+        }
     }
 }
