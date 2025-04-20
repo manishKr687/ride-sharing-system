@@ -15,6 +15,27 @@ pipeline {
             }
         }
 
+        stage('Build User Service') {
+            steps {
+                dir('user-service') {
+                    bat 'mvn clean install'
+                }
+            }
+        }
+        stage('Build Driver Service') {
+            steps {
+                dir('driver-service') {
+                    bat 'mvn clean install'
+                }
+            }
+        }
+        stage('Build Ride Service') {
+            steps {
+                dir('ride-service') {
+                    bat 'mvn clean install'
+                }
+            }
+        }
         stage('Build Notification Service') {
             steps {
                 dir('notification-service') {
@@ -26,29 +47,6 @@ pipeline {
         stage('Build Payment Service') {
             steps {
                 dir('payment-service') {
-                    bat 'mvn clean install'
-                }
-            }
-        }
-
-        stage('Build Ride Service') {
-            steps {
-                dir('ride-service') {
-                    bat 'mvn clean install'
-                }
-            }
-        }
-
-        stage('Build User Service') {
-            steps {
-                dir('user-service') {
-                    bat 'mvn clean install'
-                }
-            }
-        }
-        stage('Build Driver Service') {
-            steps {
-                dir('driver-service') {
                     bat 'mvn clean install'
                 }
             }
