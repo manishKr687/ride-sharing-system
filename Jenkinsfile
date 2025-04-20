@@ -7,53 +7,10 @@ pipeline {
                 git branch: 'main', url: 'https://github.com/manishKr687/ride-sharing-system.git'
             }
         }
-        stage('Build Common-library Service') {
+
+        stage('Build All Services') {
             steps {
-                dir('common-library') {
-                    bat 'mvn clean install -DskipTests'
-                }
-            }
-        }
-        stage('Build User Service') {
-            steps {
-                dir('user-service') {
-                    bat 'mvn clean install -DskipTests'
-                }
-            }
-        }
-        stage('Build Driver Service') {
-            steps {
-                dir('driver-service') {
-                    bat 'mvn clean install -DskipTests'
-                }
-            }
-        }
-        stage('Build Ride Service') {
-            steps {
-                dir('ride-service') {
-                    bat 'mvn clean install -DskipTests'
-                }
-            }
-        }
-        stage('Build Notification Service') {
-            steps {
-                dir('notification-service') {
-                    bat 'mvn clean install -DskipTests'
-                }
-            }
-        }
-        stage('Build Payment Service') {
-            steps {
-                dir('payment-service') {
-                    bat 'mvn clean install -DskipTests'
-                }
-            }
-        }
-        stage('Build Billing Service') {
-            steps {
-                dir('billing-service') {
-                    bat 'mvn clean install -DskipTests'
-                }
+                bat 'mvn clean install -DskipTests -Dmaven.javadoc.skip=true'
             }
         }
     }
