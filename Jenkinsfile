@@ -15,14 +15,6 @@ pipeline {
             }
         }
 
-        stage('Build Billing Service') {
-            steps {
-                dir('billing-service') {
-                    bat 'mvn clean install'
-                }
-            }
-        }
-
         stage('Build Notification Service') {
             steps {
                 dir('notification-service') {
@@ -57,6 +49,13 @@ pipeline {
         stage('Build Driver Service') {
             steps {
                 dir('driver-service') {
+                    bat 'mvn clean install'
+                }
+            }
+        }
+        stage('Build Billing Service') {
+            steps {
+                dir('billing-service') {
                     bat 'mvn clean install'
                 }
             }
