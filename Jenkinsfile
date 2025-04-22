@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    environment {
+        REGISTRY = "ride-sharing-system"
+    }
+
     stages {
         stage('Checkout') {
             steps {
@@ -8,46 +12,37 @@ pipeline {
             }
         }
 
-        stage('Build All Services') {
+        stage('Build Maven Projects') {
             steps {
-                bat 'mvn clean install -DskipTests'
+                sh 'mvn clean install -DskipTests'
             }
         }
 
-        stage('Run Microservices') {
+        stage('Build Docker Images') {
             steps {
-                parallel (
-                    "User Service": {
-                        dir('user-service') {
-                            bat 'start cmd /c "java -jar target/user-service-0.0.1-SNAPSHOT.jar"'
-                        }
-                    },
-                    "Driver Service": {
-                        dir('driver-service') {
-                            bat 'start cmd /c "java -jar target/driver-service-0.0.1-SNAPSHOT.jar"'
-                        }
-                    },
-                    "Ride Service": {
-                        dir('ride-service') {
-                            bat 'start cmd /c "java -jar target/ride-service-0.0.1-SNAPSHOT.jar"'
-                        }
-                    },
-                    "Notification Service": {
-                        dir('notification-service') {
-                            bat 'start cmd /c "java -jar target/notification-service-0.0.1-SNAPSHOT.jar"'
-                        }
-                    },
-                    "Payment Service": {
-                        dir('payment-service') {
-                            bat 'start cmd /c "java -jar target/payment-service-0.0.1-SNAPSHOT.jar"'
-                        }
-                    },
-                    "Billing Service": {
-                        dir('billing-service') {
-                            bat 'start cmd /c "java -jar target/billing-service-0.0.1-SNAPSHOT.jar"'
+                script {
+                    def services = [
+						'common-library'
+                        'user-service',
+                        'driver-service',
+                        'ride-service',
+                        'payment-service',
+                        'billing-service',
+                        'notification-service'
+                    ]
+                    for (service in services) {
+                        dir(service) {
+                            sh "docker build -t ${REGISTRY}-${service}:latest ."
                         }
                     }
-                )
+                }
+            }
+        }
+
+        stage('Docker Compose Up') {
+            steps {
+                sh 'docker-compose down || true'
+                sh 'docker-compose up -d --build'
             }
         }
     }
