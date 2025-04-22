@@ -1,0 +1,104 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:14
+    container_name: ride-sharing-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./postgres-init:/docker-entrypoint-initdb.d
+    networks:
+      - ride-sharing-network
+      
+  user-service:
+    image: user-service-image
+    container_name: user-service
+    ports:
+      - "7072:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/user_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres    
+    networks:
+      - ride-sharing-network
+    depends_on:
+      - postgres
+      
+  driver-service:
+    image: driver-service-image
+    container_name: driver-service
+    ports:
+      - "7073:8082"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/driver_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+    networks:
+      - ride-sharing-network
+    depends_on:
+      - postgres
+
+  ride-service:
+    image: ride-service-image
+    container_name: ride-service
+    ports:
+      - "7071:8083"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ride_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+    networks:
+      - ride-sharing-network
+    depends_on:
+      - postgres
+
+  payment-service:
+    image: payment-service-image
+    container_name: payment-service
+    ports:
+      - "7075:8084"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/payment_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+    networks:
+      - ride-sharing-network
+    depends_on:
+      - postgres
+
+  billing-service:
+    image: billing-service-image
+    container_name: billing-service
+    ports:
+      - "7076:8085"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/billing_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+    networks:
+      - ride-sharing-network
+    depends_on:
+      - postgres
+
+  notification-service:
+    image: notification-service-image
+    container_name: notification-service
+    ports:
+      - "7074:8086"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/notification_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+    networks:
+      - ride-sharing-network
+    depends_on:
+      - postgres
+
+networks:
+  ride-sharing-network:
+    driver: bridge
