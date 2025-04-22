@@ -43,7 +43,7 @@ services:
 
  
   user-service:
-    image: user-service-image
+    image: ride-sharing-system-user-service
     container_name: user-service
     ports:
       - "7072:8081"
@@ -57,7 +57,7 @@ services:
       - postgres
       
   driver-service:
-    image: driver-service-image
+    image: ride-sharing-system-driver-service
     container_name: driver-service
     ports:
       - "7073:8082"
@@ -71,7 +71,7 @@ services:
       - postgres
 
   ride-service:
-    image: ride-service-image
+    image: ride-sharing-system-ride-service
     container_name: ride-service
     ports:
       - "7071:8083"
@@ -86,7 +86,7 @@ services:
       - kafka
 
   payment-service:
-    image: payment-service-image
+    image: ride-sharing-system-payment-service
     container_name: payment-service
     ports:
       - "7075:8084"
@@ -101,7 +101,7 @@ services:
       - kafka
 
   billing-service:
-    image: billing-service-image
+    image: ride-sharing-system-billing-service
     container_name: billing-service
     ports:
       - "7076:8085"
@@ -116,7 +116,7 @@ services:
       - kafka
 
   notification-service:
-    image: notification-service-image
+    image: ride-sharing-system-notification-service
     container_name: notification-service
     ports:
       - "7074:8086"
