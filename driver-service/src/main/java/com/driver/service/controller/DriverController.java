@@ -1,5 +1,7 @@
 package com.driver.service.controller;
 
+import com.driver.service.dto.DriverRequestDTO;
+import com.driver.service.dto.DriverResponseDTO;
 import com.driver.service.entity.Driver;
 import com.driver.service.entity.DriverStatus;
 import com.driver.service.service.DriverService;
@@ -17,22 +19,22 @@ public class DriverController {
     private final DriverService driverService;
 
     @PostMapping("/register")
-    public ResponseEntity<Driver> registerDriver(@RequestBody Driver driver){
+    public ResponseEntity<DriverResponseDTO> registerDriver(@RequestBody DriverRequestDTO driver){
         return new ResponseEntity<>(driverService.registerDriver(driver), HttpStatus.CREATED);
     }
 
     @GetMapping()
-    public ResponseEntity<List<Driver>> getAllDrivers(){
+    public ResponseEntity<List<DriverResponseDTO>> getAllDrivers(){
         return new ResponseEntity<>(driverService.getAllDrivers(), HttpStatus.OK);
     }
 
     @GetMapping("/available")
-    public ResponseEntity<List<Driver>> allAvailableDrivers(){
+    public ResponseEntity<List<DriverResponseDTO>> allAvailableDrivers(){
         return new ResponseEntity<>(driverService.getAvailableDrivers(), HttpStatus.OK);
     }
 
     @PutMapping("/update-status/{driverId}")
-    public Driver updateDriverStatus(@PathVariable Long driverId, @RequestParam DriverStatus status) {
+    public DriverResponseDTO updateDriverStatus(@PathVariable Long driverId, @RequestParam DriverStatus status) {
         return driverService.updateDriverStatus(driverId, status);
     }
 

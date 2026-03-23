@@ -1,5 +1,7 @@
 package com.user.service.controller;
 
+import com.user.service.dto.UserRequestDTO;
+import com.user.service.dto.UserResponseDTO;
 import com.user.service.entity.Users;
 import com.user.service.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -8,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("api/v1/users")
@@ -17,29 +18,23 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/register")
-    public ResponseEntity<Users> registerUser(@RequestBody Users users){
-        return new ResponseEntity<Users>(userService.registerUser(users), HttpStatus.CREATED);
+    public ResponseEntity<UserResponseDTO> registerUser(@RequestBody UserRequestDTO users){
+        return new ResponseEntity<>(userService.registerUser(users), HttpStatus.CREATED);
     }
 
     @GetMapping()
-    public ResponseEntity<List<Users>> getAllUsers(){
+    public ResponseEntity<List<UserResponseDTO>> getAllUsers(){
         return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<Optional<Users>> getAllUsers(@PathVariable Long userId){
+    public ResponseEntity<UserResponseDTO> getAllUsers(@PathVariable Long userId){
         return new ResponseEntity<>(userService.getUserById(userId), HttpStatus.OK);
     }
 
     @GetMapping("/email")
-    public ResponseEntity<Optional<Users>> getAllUsers(@RequestParam String email){
-        Optional<Users> user = userService.getByEmail(email);
-        if (user.isPresent()) {
-            return new ResponseEntity<>(user, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        //return new ResponseEntity<>(userService.getByEmail(email), HttpStatus.OK);
+    public ResponseEntity<UserResponseDTO> getAllUsers(@RequestParam String email){
+        return new ResponseEntity<>(userService.getByEmail(email), HttpStatus.OK);
     }
 
     @PutMapping("/update-location/{userId}")

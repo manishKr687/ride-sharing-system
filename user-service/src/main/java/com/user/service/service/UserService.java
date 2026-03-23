@@ -1,5 +1,7 @@
 package com.user.service.service;
 
+import com.user.service.dto.UserRequestDTO;
+import com.user.service.dto.UserResponseDTO;
 import com.user.service.entity.Users;
 import com.user.service.exception.UserNotFoundException;
 import com.user.service.repository.UserRepository;
@@ -7,28 +9,38 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
 
-    public Users registerUser(Users users){
-        return userRepository.save(users);
+    public UserResponseDTO registerUser(UserRequestDTO request){
+        Users users = new Users();
+        users.setName(request.getName());
+        users.setEmail(request.getEmail());
+        users.setRole(request.getRole());
+        users.setCurrentLatitude(request.getCurrentLatitude());
+        users.setCurrentLongitude(request.getCurrentLongitude());
+        return mapToResponse(userRepository.save(users));
     }
 
-    public List<Users> getAllUsers(){
-        return userRepository.findAll();
+    public List<UserResponseDTO> getAllUsers(){
+        return userRepository.findAll().stream()
+            .map(this::mapToResponse)
+            .toList();
     }
 
-    public Optional<Users> getUserById(Long userId){
-        return userRepository.findById(userId);
+    public UserResponseDTO getUserById(Long userId){
+        Users user = userRepository.findById(userId)
+            .orElseThrow(() -> new UserNotFoundException(userId));
+        return mapToResponse(user);
     }
 
-    public Optional<Users> getByEmail(String email){
-
-        return userRepository.findByEmail(email);
+    public UserResponseDTO getByEmail(String email){
+        Users user = userRepository.findByEmail(email)
+            .orElseThrow(() -> new UserNotFoundException(null));
+        return mapToResponse(user);
     }
 
     public void updateLocation(Long userId, Double longitude, Double latitude){
@@ -37,5 +49,16 @@ public class UserService {
         users.setCurrentLongitude(longitude);
         users.setCurrentLatitude(latitude);
         userRepository.save(users);
+    }
+
+    private UserResponseDTO mapToResponse(Users user) {
+        return UserResponseDTO.builder()
+            .userId(user.getUserId())
+            .name(user.getName())
+            .email(user.getEmail())
+            .role(user.getRole())
+            .currentLatitude(user.getCurrentLatitude())
+            .currentLongitude(user.getCurrentLongitude())
+            .build();
     }
 }
