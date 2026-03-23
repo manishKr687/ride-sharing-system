@@ -1,6 +1,7 @@
 package com.payment.service.service;
 
 import com.common.model.PaymentEvent;
+import com.payment.service.dto.PaymentRequestDTO;
 import com.payment.service.dto.PaymentResponseDTO;
 import com.payment.service.entity.Payment;
 import com.payment.service.kafka.PaymentProducer;
@@ -18,7 +19,12 @@ public class PaymentService {
     private final PaymentProducer paymentProducer;
     private final PaymentRepository paymentRepository;
 
-    public PaymentResponseDTO paymentProcess(Payment payment) {
+    public PaymentResponseDTO paymentProcess(PaymentRequestDTO request) {
+        Payment payment = Payment.builder()
+                .rideId(request.getRideId())
+                .userId(request.getUserId())
+                .amount(request.getAmount())
+                .build();
         boolean paymentStatus = new Random().nextBoolean();
         String status = paymentStatus ? "SUCCESS" : "FAILED";
         String message = paymentStatus ? "Payment Processed Successfully" : "Payment Failed";

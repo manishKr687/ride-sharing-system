@@ -1,8 +1,9 @@
 package com.payment.service.controller;
 
+import com.payment.service.dto.PaymentRequestDTO;
 import com.payment.service.dto.PaymentResponseDTO;
-import com.payment.service.entity.Payment;
 import com.payment.service.service.PaymentService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -19,7 +20,7 @@ public class PaymentController {
     private final PaymentService paymentService;
 
     @PostMapping("")
-    public ResponseEntity<PaymentResponseDTO> sentPaymentRequest(@RequestBody Payment payment) {
-        return ResponseEntity.ok(paymentService.paymentProcess(payment));
+    public ResponseEntity<PaymentResponseDTO> sentPaymentRequest(@Valid @RequestBody PaymentRequestDTO request) {
+        return ResponseEntity.ok(paymentService.paymentProcess(request));
     }
 }
