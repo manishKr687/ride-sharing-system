@@ -1,6 +1,7 @@
 version: '3.8'
 
 services:
+
   postgres:
     image: postgres:14
     container_name: ride-sharing-postgres
@@ -12,9 +13,14 @@ services:
       - "5432:5432"
     volumes:
       - ./postgres-init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     networks:
       - ride-sharing-network
- 
+
   zookeeper:
     image: confluentinc/cp-zookeeper:7.5.0
     container_name: zookeeper
@@ -41,94 +47,123 @@ services:
     networks:
       - ride-sharing-network
 
- 
   user-service:
-    image: ride-sharing-system-user-service
+    build:
+      context: .
+      dockerfile: user-service/Dockerfile
     container_name: user-service
     ports:
-      - "7072:8081"
+      - "7072:7072"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/user_db
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/user_service
       SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: postgres    
+      SPRING_DATASOURCE_PASSWORD: postgres
+    depends_on:
+      postgres:
+        condition: service_healthy
     networks:
       - ride-sharing-network
-    depends_on:
-      - postgres
-      
+
   driver-service:
-    image: ride-sharing-system-driver-service
+    build:
+      context: .
+      dockerfile: driver-service/Dockerfile
     container_name: driver-service
     ports:
-      - "7073:8082"
+      - "7073:7073"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/driver_db
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/driver_service
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
+    depends_on:
+      postgres:
+        condition: service_healthy
     networks:
       - ride-sharing-network
-    depends_on:
-      - postgres
 
   ride-service:
-    image: ride-sharing-system-ride-service
+    build:
+      context: .
+      dockerfile: ride-service/Dockerfile
     container_name: ride-service
     ports:
-      - "7071:8083"
+      - "7071:7071"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ride_db
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ride_service
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      SERVICES_DRIVER_SERVICE_BASE_URL: http://driver-service:7073
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_started
     networks:
       - ride-sharing-network
-    depends_on:
-      - postgres
-      - kafka
 
   payment-service:
-    image: ride-sharing-system-payment-service
+    build:
+      context: .
+      dockerfile: payment-service/Dockerfile
     container_name: payment-service
     ports:
-      - "7075:8084"
+      - "7075:7075"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/payment_db
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/payment_service
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_started
     networks:
       - ride-sharing-network
-    depends_on:
-      - postgres
-      - kafka
 
   billing-service:
-    image: ride-sharing-system-billing-service
+    build:
+      context: .
+      dockerfile: billing-service/Dockerfile
     container_name: billing-service
     ports:
-      - "7076:8085"
+      - "7076:7076"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/billing_db
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/billing_service
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_started
     networks:
       - ride-sharing-network
-    depends_on:
-      - postgres
-      - kafka
 
   notification-service:
-    image: ride-sharing-system-notification-service
+    build:
+      context: .
+      dockerfile: notification-service/Dockerfile
     container_name: notification-service
     ports:
-      - "7074:8086"
+      - "7074:7074"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/notification_db
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/notification_service
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      MAIL_USERNAME: ${MAIL_USERNAME}
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
+      NOTIFICATION_RECIPIENT_EMAIL: ${NOTIFICATION_RECIPIENT_EMAIL}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_started
     networks:
       - ride-sharing-network
-    depends_on:
-      - postgres
-      - kafka
 
 networks:
   ride-sharing-network:
