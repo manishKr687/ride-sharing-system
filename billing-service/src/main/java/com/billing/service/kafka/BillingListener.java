@@ -3,16 +3,16 @@ package com.billing.service.kafka;
 import com.billing.service.entity.Invoice;
 import com.billing.service.repository.InvoiceRepository;
 import com.common.model.PaymentEvent;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
 @Service
+@RequiredArgsConstructor
 public class BillingListener {
-    @Autowired
-    private InvoiceRepository invoiceRepository;
+    private final InvoiceRepository invoiceRepository;
 
     @KafkaListener(topics = "payment_event", groupId = "billing-group", containerFactory = "containerFactory")
     public void consume(PaymentEvent paymentEvent) {

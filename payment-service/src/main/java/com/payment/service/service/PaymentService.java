@@ -4,18 +4,17 @@ import com.common.model.PaymentEvent;
 import com.payment.service.entity.Payment;
 import com.payment.service.kafka.PaymentProducer;
 import com.payment.service.repository.PaymentRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Random;
 
 @Service
+@RequiredArgsConstructor
 public class PaymentService {
-    @Autowired
-    private PaymentProducer paymentProducer;
+    private final PaymentProducer paymentProducer;
+    private final PaymentRepository paymentRepository;
 
-    @Autowired
-    private PaymentRepository paymentRepository;
     public void paymentProcess(Payment payment){
         //Payment Logic
         boolean paymentStatus = new Random().nextBoolean(); // Simulate Payment Success/Failure

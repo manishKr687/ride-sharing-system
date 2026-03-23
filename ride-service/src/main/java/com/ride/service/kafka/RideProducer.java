@@ -2,20 +2,20 @@ package com.ride.service.kafka;
 
 
 import com.common.model.RideEvent;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class RideProducer {
-        private static final String RIDE_TOPIC = "ride_event";
+    private static final String RIDE_TOPIC = "ride_event";
 
-        @Autowired
-        public KafkaTemplate<String, RideEvent> kafkaTemplate;
+    private final KafkaTemplate<String, RideEvent> kafkaTemplate;
 
-        public void sendRideEvent(RideEvent rideEvent) {
-            kafkaTemplate.send(RIDE_TOPIC, rideEvent);
-            System.out.println("Sent Ride Event: " + rideEvent);
-        }
+    public void sendRideEvent(RideEvent rideEvent) {
+        kafkaTemplate.send(RIDE_TOPIC, rideEvent);
+        System.out.println("Sent Ride Event: " + rideEvent);
+    }
 }
 

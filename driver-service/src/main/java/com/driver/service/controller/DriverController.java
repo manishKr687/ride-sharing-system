@@ -3,7 +3,7 @@ package com.driver.service.controller;
 import com.driver.service.entity.Driver;
 import com.driver.service.entity.DriverStatus;
 import com.driver.service.service.DriverService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,9 +12,9 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v2/drivers")
+@RequiredArgsConstructor
 public class DriverController {
-    @Autowired
-    private DriverService driverService;
+    private final DriverService driverService;
 
     @PostMapping("/register")
     public ResponseEntity<Driver> registerDriver(@RequestBody Driver driver){

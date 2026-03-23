@@ -3,15 +3,15 @@ package com.driver.service.service;
 import com.driver.service.entity.Driver;
 import com.driver.service.entity.DriverStatus;
 import com.driver.service.repository.DriverRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class DriverService {
-    @Autowired
-    private DriverRepository driverRepository;
+    private final DriverRepository driverRepository;
 
     public Driver registerDriver(Driver driver){
         return driverRepository.save(driver);

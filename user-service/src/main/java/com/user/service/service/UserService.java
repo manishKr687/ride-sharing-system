@@ -2,16 +2,16 @@ package com.user.service.service;
 
 import com.user.service.entity.Users;
 import com.user.service.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     public Users registerUser(Users users){
         return userRepository.save(users);
