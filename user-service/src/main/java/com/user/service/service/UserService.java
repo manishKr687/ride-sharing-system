@@ -1,6 +1,7 @@
 package com.user.service.service;
 
 import com.user.service.entity.Users;
+import com.user.service.exception.UserNotFoundException;
 import com.user.service.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -31,7 +32,8 @@ public class UserService {
     }
 
     public void updateLocation(Long userId, Double longitude, Double latitude){
-        Users users = userRepository.findById(userId).orElseThrow(()-> new RuntimeException("User Not Found"));
+        Users users = userRepository.findById(userId)
+            .orElseThrow(() -> new UserNotFoundException(userId));
         users.setCurrentLongitude(longitude);
         users.setCurrentLatitude(latitude);
         userRepository.save(users);

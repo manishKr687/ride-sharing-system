@@ -2,6 +2,7 @@ package com.driver.service.service;
 
 import com.driver.service.entity.Driver;
 import com.driver.service.entity.DriverStatus;
+import com.driver.service.exception.DriverNotFoundException;
 import com.driver.service.repository.DriverRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,13 +27,15 @@ public class DriverService {
     }
 
     public Driver updateDriverStatus(Long driverId, DriverStatus driverStatus){
-        Driver driver = driverRepository.findById(driverId).orElseThrow(()-> new RuntimeException("Driver Not found"));
+        Driver driver = driverRepository.findById(driverId)
+            .orElseThrow(() -> new DriverNotFoundException(driverId));
         driver.setDriverStatus(driverStatus);
         return driverRepository.save(driver);
     }
 
     public void updateDriverLocation(Long driverId, Double latitude, Double longitude){
-        Driver driver = driverRepository.findById(driverId).orElseThrow(()-> new RuntimeException("Driver Not found"));
+        Driver driver = driverRepository.findById(driverId)
+            .orElseThrow(() -> new DriverNotFoundException(driverId));
         driver.setCurrentLongitude(longitude);;
         driver.setCurrentLatitude(latitude);
         driverRepository.save(driver);

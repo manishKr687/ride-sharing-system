@@ -4,6 +4,7 @@ import com.billing.service.entity.Invoice;
 import com.billing.service.repository.InvoiceRepository;
 import com.common.model.PaymentEvent;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class BillingListener {
     private final InvoiceRepository invoiceRepository;
 
@@ -26,10 +28,10 @@ public class BillingListener {
             invoice.setCreatedAt(LocalDateTime.now());
 
             invoiceRepository.save(invoice);
-            System.out.println("Invoice generated for Payment: " + paymentEvent.getPaymentId());
+            log.info("Invoice generated for paymentId={}, rideId={}", paymentEvent.getPaymentId(), paymentEvent.getRideId());
         }
         else{
-            System.out.println("Invoice not generated for Payment: ");
+            log.warn("Invoice not generated because payment failed for paymentId={}", paymentEvent.getPaymentId());
         }
     }
 }

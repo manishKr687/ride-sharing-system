@@ -1,5 +1,6 @@
 package com.ride.service.exception;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -13,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
     
     @ExceptionHandler(RideNotFoundException.class)
@@ -93,9 +95,7 @@ public class GlobalExceptionHandler {
             Exception ex,
             WebRequest request) {
         
-        // Log the full exception for debugging
-        System.err.println("Unexpected error: " + ex.getClass().getName() + " - " + ex.getMessage());
-        ex.printStackTrace();
+        log.error("Unexpected error while processing request {}", request.getDescription(false), ex);
         
         ErrorResponse error = ErrorResponse.builder()
             .timestamp(LocalDateTime.now())

@@ -3,23 +3,21 @@ package com.notification.service.kafka;
 
 import com.common.model.RideEvent;
 import com.notification.service.service.EmailService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
+@Slf4j
 public class NotificationListener {
 
     private final EmailService emailService;
 
-    @Autowired
-    public NotificationListener(EmailService emailService) {
-        this.emailService = emailService;
-    }
-
     @KafkaListener(topics = "ride_event", groupId = "notification-group", containerFactory = "rideKafkaListenerContainerFactory")
     public void listenRideEvents(RideEvent rideEvent) {
-        System.out.println("Received Ride Event: " + rideEvent);
+        log.info("Received ride event for rideId={} with status={}", rideEvent.getRideId(), rideEvent.getStatus());
 
         try {
             // Send email notification after processing
@@ -28,24 +26,24 @@ public class NotificationListener {
                     "Ride Event Notification",
                     rideEvent.getStatus().name()
             );
-            System.out.println("Email sent successfully.");
+            log.info("Ride notification email sent for rideId={}", rideEvent.getRideId());
         } catch (Exception e) {
-            System.err.println("Failed to send email: " + e.getMessage());
+            log.error("Failed to send ride notification email for rideId={}", rideEvent.getRideId(), e);
         }
 
         // Handle ride event status
         switch (rideEvent.getStatus()) {
             case REQUESTED:
-                System.out.println("Processing new ride request...");
+                log.info("Processing new ride request for rideId={}", rideEvent.getRideId());
                 break;
             case ASSIGNED:
-                System.out.println("Driver assigned to the ride...");
+                log.info("Driver assigned to rideId={} with driverId={}", rideEvent.getRideId(), rideEvent.getDriverId());
                 break;
             case COMPLETED:
-                System.out.println("Ride completed successfully...");
+                log.info("Ride completed successfully for rideId={}", rideEvent.getRideId());
                 break;
             default:
-                System.out.println("Unknown event status received: " + rideEvent.getStatus());
+                log.warn("Unknown ride event status received for rideId={}: {}", rideEvent.getRideId(), rideEvent.getStatus());
         }
     }
 }

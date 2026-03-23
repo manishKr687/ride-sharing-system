@@ -2,21 +2,20 @@ package com.notification.service.kafka;
 
 import com.common.model.PaymentEvent;
 import com.notification.service.service.EmailService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
+@Slf4j
 public class PaymentNotificationListener {
     private final EmailService emailService;
 
-    @Autowired
-    public PaymentNotificationListener(EmailService emailService) {
-        this.emailService = emailService;
-    }
     @KafkaListener(topics = "payment_event", groupId = "notification-group", containerFactory = "paymentKafkaListenerContainerFactory")
     public void listenPaymentEvents(PaymentEvent paymentEvent) {
-        System.out.println("Received Payment Event: " + paymentEvent);
+        log.info("Received payment event for paymentId={} with status={}", paymentEvent.getPaymentId(), paymentEvent.getStatus());
 
         try {
             // Send email notification after processing
@@ -25,18 +24,18 @@ public class PaymentNotificationListener {
                     "Payment Event Notification",
                     paymentEvent.getStatus()
             );
-            System.out.println("Email sent successfully.");
+            log.info("Payment notification email sent for paymentId={}", paymentEvent.getPaymentId());
         } catch (Exception e) {
-            System.err.println("Failed to send email: " + e.getMessage());
+            log.error("Failed to send payment notification email for paymentId={}", paymentEvent.getPaymentId(), e);
         }
 
         // Handle payment event status
         switch (paymentEvent.getStatus()) {
             case "SUCCESS":
-                System.out.println("Payment Successful...");
+                log.info("Payment successful for paymentId={}", paymentEvent.getPaymentId());
                 break;
             default:
-                System.out.println("Payment Failed: " + paymentEvent.getStatus());
+                log.warn("Payment failed for paymentId={} with status={}", paymentEvent.getPaymentId(), paymentEvent.getStatus());
         }
     }
 }

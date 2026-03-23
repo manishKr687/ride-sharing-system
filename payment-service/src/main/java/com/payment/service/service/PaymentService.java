@@ -5,12 +5,14 @@ import com.payment.service.entity.Payment;
 import com.payment.service.kafka.PaymentProducer;
 import com.payment.service.repository.PaymentRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class PaymentService {
     private final PaymentProducer paymentProducer;
     private final PaymentRepository paymentRepository;
@@ -32,6 +34,6 @@ public class PaymentService {
                 message(message).build();
 
         paymentProducer.sendPaymentEvent(paymentEvent);
-        System.out.println("Payment Event Sent");
+        log.info("Payment event prepared and sent for paymentId={}, rideId={}", payment.getPaymentId(), payment.getRideId());
     }
 }
