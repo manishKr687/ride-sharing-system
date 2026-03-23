@@ -132,7 +132,7 @@ const sections = [
     fields: [
       { name: "rideId", label: "Ride ID", type: "number", placeholder: "1", min: "1" },
       { name: "userId", label: "User ID", type: "number", placeholder: "1", min: "1" },
-      { name: "amount", label: "Amount", type: "number", placeholder: "250.00", min: "0", step: "0.01" }
+      { name: "amount", label: "Amount", type: "number", placeholder: "250.00", min: "0.01", step: "0.01" }
     ]
   }
 ];
@@ -225,7 +225,13 @@ function App() {
 
     if (!response.ok) {
       appendLog("Response Error", { status: response.status, body });
-      throw new Error(`Request failed with status ${response.status}`);
+      const serverMessage =
+        (body && typeof body === "object" && (body.message || body.error)) ||
+        (typeof body === "string" && body) ||
+        `HTTP ${response.status}`;
+      const err = new Error(serverMessage);
+      err.body = body;
+      throw err;
     }
 
     appendLog("Response", { status: response.status, body });
@@ -248,7 +254,7 @@ function App() {
         });
         applyWorkflowDefaults({
           userId: response.userId,
-          userMeta: `${response.name} · ${response.email}`,
+          userMeta: `${response.name} â†’ ${response.email}`,
           statusTone: "success"
         });
       }
@@ -261,7 +267,7 @@ function App() {
         });
         applyWorkflowDefaults({
           driverId: response.driverId,
-          driverMeta: `${response.name} · ${response.vehicleNumber}`,
+          driverMeta: `${response.name} â†’ ${response.vehicleNumber}`,
           statusTone: "success"
         });
       }
@@ -286,7 +292,7 @@ function App() {
         applyWorkflowDefaults({
           rideId: response.rideId,
           driverId: response.driverId,
-          rideMeta: `Assigned driver #${response.driverId} · status ${response.status}`,
+          rideMeta: `Assigned driver #${response.driverId} â†’ status ${response.status}`,
           driverMeta: `Assigned to ride #${response.rideId}`,
           statusTone: "success"
         });
@@ -298,7 +304,7 @@ function App() {
         });
         applyWorkflowDefaults({
           rideId: response.rideId,
-          rideMeta: `Completed · ${response.pickupLocation} -> ${response.dropLocation}`,
+          rideMeta: `Completed â†’ ${response.pickupLocation} -> ${response.dropLocation}`,
           statusTone: "success"
         });
       }
@@ -311,7 +317,7 @@ function App() {
         });
         applyWorkflowDefaults({
           paymentId: response.paymentId,
-          paymentMeta: `${response.status} · ${response.message}`,
+          paymentMeta: `${response.status} â†’ ${response.message}`,
           statusTone: response.status === "SUCCESS" ? "success" : "warning"
         });
       }
@@ -320,7 +326,8 @@ function App() {
       appendLog("Workflow", section.successLabel);
     } catch (error) {
       applyWorkflowDefaults({ statusTone: "error" });
-      appendLog("Frontend Error", error.message);
+      const detail = error.body ? JSON.stringify(error.body, null, 2) : error.message;
+      appendLog("Frontend Error", detail);
     } finally {
       setLoading((current) => ({ ...current, [key]: false }));
     }
