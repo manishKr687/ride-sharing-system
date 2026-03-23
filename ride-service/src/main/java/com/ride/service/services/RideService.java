@@ -1,6 +1,7 @@
 package com.ride.service.services;
 
 import com.common.model.RideEvent;
+import com.common.model.RideEventStatus;
 import com.ride.service.dto.RideRequestDTO;
 import com.ride.service.dto.RideResponseDTO;
 import com.ride.service.entity.Ride;
@@ -8,6 +9,7 @@ import com.ride.service.entity.RideStatus;
 import com.ride.service.exception.InvalidRideStateException;
 import com.ride.service.exception.RideNotFoundException;
 import com.ride.service.exception.RideProcessingException;
+import com.ride.service.integration.DriverServiceClient;
 import com.ride.service.kafka.RideProducer;
 import com.ride.service.repositories.RideRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +26,7 @@ public class RideService {
     
     private final RideProducer rideProducer;
     private final RideRepository rideRepository;
+    private final DriverServiceClient driverServiceClient;
 
     @Transactional
     public RideResponseDTO requestRide(RideRequestDTO request) {
@@ -48,7 +51,7 @@ public class RideService {
                 .rideId(savedRide.getRideId())
                 .userId(savedRide.getUserId())
                 .driverId(savedRide.getDriverId())
-                .status("REQUESTED")
+                .status(RideEventStatus.REQUESTED)
                 .message("Ride Requested Successfully")
                 .build();
             
@@ -87,7 +90,7 @@ public class RideService {
             .rideId(updatedRide.getRideId())
             .userId(updatedRide.getUserId())
             .driverId(updatedRide.getDriverId())
-            .status(newStatus.toString())
+            .status(toRideEventStatus(newStatus))
             .message("Ride Status Updated to: " + newStatus)
             .build();
         
@@ -96,7 +99,7 @@ public class RideService {
         return mapToResponseDTO(updatedRide);
     }
 
-@Transactional
+    @Transactional
     public RideResponseDTO assignDriver(Long rideId, Long driverId) {
         log.info("Assigning driver {} to ride {}", driverId, rideId);
         
@@ -108,11 +111,25 @@ public class RideService {
                 "Cannot assign driver to ride in status: " + ride.getStatus()
             );
         }
+
+        driverServiceClient.assignDriver(driverId);
         
         ride.setDriverId(driverId);
         ride.setStatus(RideStatus.ASSIGNED);
         
         Ride updatedRide = rideRepository.save(ride);
+
+        RideEvent rideEvent = RideEvent.builder()
+            .rideId(updatedRide.getRideId())
+            .userId(updatedRide.getUserId())
+            .driverId(updatedRide.getDriverId())
+            .status(RideEventStatus.ASSIGNED)
+            .message("Driver assigned to ride")
+            .build();
+
+        rideProducer.sendRideEvent(rideEvent);
+        log.info("Ride {} assigned to driver {} and event published", rideId, driverId);
+
         return mapToResponseDTO(updatedRide);
     }
     
@@ -155,5 +172,9 @@ public class RideService {
         }
         
         log.debug("Valid transition from {} to {}", current, next);
+    }
+
+    private RideEventStatus toRideEventStatus(RideStatus rideStatus) {
+        return RideEventStatus.valueOf(rideStatus.name());
     }
 }

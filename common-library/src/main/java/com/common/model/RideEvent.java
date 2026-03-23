@@ -13,6 +13,6 @@ public class RideEvent {
     private Long rideId;
     private Long userId;
     private Long driverId;
-    private String status;  // REQUESTED, ACCEPTED, COMPLETED
+    private RideEventStatus status;
     private String message;
 }

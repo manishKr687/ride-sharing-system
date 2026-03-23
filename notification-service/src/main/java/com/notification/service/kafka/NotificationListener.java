@@ -26,7 +26,7 @@ public class NotificationListener {
             emailService.sendEmail(
                     "mfresher687@gmail.com",  // Replace with actual recipient
                     "Ride Event Notification",
-                    rideEvent.getStatus()
+                    rideEvent.getStatus().name()
             );
             System.out.println("Email sent successfully.");
         } catch (Exception e) {
@@ -35,13 +35,13 @@ public class NotificationListener {
 
         // Handle ride event status
         switch (rideEvent.getStatus()) {
-            case "REQUESTED":
+            case REQUESTED:
                 System.out.println("Processing new ride request...");
                 break;
-            case "ACCEPTED":
-                System.out.println("Driver accepted the ride...");
+            case ASSIGNED:
+                System.out.println("Driver assigned to the ride...");
                 break;
-            case "COMPLETED":
+            case COMPLETED:
                 System.out.println("Ride completed successfully...");
                 break;
             default:
