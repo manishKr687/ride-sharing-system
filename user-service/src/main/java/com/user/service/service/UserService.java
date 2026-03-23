@@ -39,7 +39,7 @@ public class UserService {
 
     public UserResponseDTO getByEmail(String email){
         Users user = userRepository.findByEmail(email)
-            .orElseThrow(() -> new UserNotFoundException(null));
+            .orElseThrow(() -> new UserNotFoundException(email));
         return mapToResponse(user);
     }
 

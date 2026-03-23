@@ -1,6 +1,7 @@
 package com.payment.service.service;
 
 import com.common.model.PaymentEvent;
+import com.payment.service.dto.PaymentResponseDTO;
 import com.payment.service.entity.Payment;
 import com.payment.service.kafka.PaymentProducer;
 import com.payment.service.repository.PaymentRepository;
@@ -17,23 +18,32 @@ public class PaymentService {
     private final PaymentProducer paymentProducer;
     private final PaymentRepository paymentRepository;
 
-    public void paymentProcess(Payment payment){
-        //Payment Logic
-        boolean paymentStatus = new Random().nextBoolean(); // Simulate Payment Success/Failure
+    public PaymentResponseDTO paymentProcess(Payment payment) {
+        boolean paymentStatus = new Random().nextBoolean();
         String status = paymentStatus ? "SUCCESS" : "FAILED";
         String message = paymentStatus ? "Payment Processed Successfully" : "Payment Failed";
 
-        paymentRepository.save(payment);
+        Payment savedPayment = paymentRepository.save(payment);
 
-        PaymentEvent paymentEvent = PaymentEvent.builder().
-                paymentId(payment.getPaymentId()).
-                userId(payment.getUserId()).
-                rideId(payment.getRideId()).
-                amount(payment.getAmount()).
-                status(status).
-                message(message).build();
+        PaymentEvent paymentEvent = PaymentEvent.builder()
+                .paymentId(savedPayment.getPaymentId())
+                .userId(savedPayment.getUserId())
+                .rideId(savedPayment.getRideId())
+                .amount(savedPayment.getAmount())
+                .status(status)
+                .message(message)
+                .build();
 
         paymentProducer.sendPaymentEvent(paymentEvent);
-        log.info("Payment event prepared and sent for paymentId={}, rideId={}", payment.getPaymentId(), payment.getRideId());
+        log.info("Payment event prepared and sent for paymentId={}, rideId={}", savedPayment.getPaymentId(), savedPayment.getRideId());
+
+        return PaymentResponseDTO.builder()
+                .paymentId(savedPayment.getPaymentId())
+                .rideId(savedPayment.getRideId())
+                .userId(savedPayment.getUserId())
+                .amount(savedPayment.getAmount())
+                .status(status)
+                .message(message)
+                .build();
     }
 }

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/ride")
+@CrossOrigin(origins = "*")
 @RequiredArgsConstructor  // ✅ Constructor injection
 @Validated  // ✅ Enable method-level validation
 public class RideController {
