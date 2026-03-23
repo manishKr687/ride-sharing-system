@@ -4,6 +4,7 @@ import com.common.model.PaymentEvent;
 import com.notification.service.service.EmailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +14,9 @@ import org.springframework.stereotype.Service;
 public class PaymentNotificationListener {
     private final EmailService emailService;
 
+    @Value("${notification.recipient.email}")
+    private String recipientEmail;
+
     @KafkaListener(topics = "payment_event", groupId = "notification-group", containerFactory = "paymentKafkaListenerContainerFactory")
     public void listenPaymentEvents(PaymentEvent paymentEvent) {
         log.info("Received payment event for paymentId={} with status={}", paymentEvent.getPaymentId(), paymentEvent.getStatus());
@@ -20,7 +24,7 @@ public class PaymentNotificationListener {
         try {
             // Send email notification after processing
             emailService.sendEmail(
-                    "mfresher687@gmail.com",
+                    recipientEmail,
                     "Payment Event Notification",
                     paymentEvent.getStatus()
             );

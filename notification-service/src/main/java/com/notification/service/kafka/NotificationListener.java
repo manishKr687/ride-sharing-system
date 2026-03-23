@@ -5,6 +5,7 @@ import com.common.model.RideEvent;
 import com.notification.service.service.EmailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +16,9 @@ public class NotificationListener {
 
     private final EmailService emailService;
 
+    @Value("${notification.recipient.email}")
+    private String recipientEmail;
+
     @KafkaListener(topics = "ride_event", groupId = "notification-group", containerFactory = "rideKafkaListenerContainerFactory")
     public void listenRideEvents(RideEvent rideEvent) {
         log.info("Received ride event for rideId={} with status={}", rideEvent.getRideId(), rideEvent.getStatus());
@@ -22,7 +26,7 @@ public class NotificationListener {
         try {
             // Send email notification after processing
             emailService.sendEmail(
-                    "mfresher687@gmail.com",  // Replace with actual recipient
+                    recipientEmail,
                     "Ride Event Notification",
                     rideEvent.getStatus().name()
             );
