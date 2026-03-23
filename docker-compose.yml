@@ -165,6 +165,16 @@ services:
     networks:
       - ride-sharing-network
 
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: frontend
+    ports:
+      - "5173:5173"
+    networks:
+      - ride-sharing-network
+
 networks:
   ride-sharing-network:
     driver: bridge

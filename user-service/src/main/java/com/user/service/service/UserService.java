@@ -7,6 +7,7 @@ import com.user.service.exception.UserNotFoundException;
 import com.user.service.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -43,7 +44,8 @@ public class UserService {
         return mapToResponse(user);
     }
 
-    public void updateLocation(Long userId, Double longitude, Double latitude){
+    @Transactional
+    public void updateLocation(Long userId, Double latitude, Double longitude){
         Users users = userRepository.findById(userId)
             .orElseThrow(() -> new UserNotFoundException(userId));
         users.setCurrentLongitude(longitude);

@@ -2,8 +2,9 @@ package com.user.service.controller;
 
 import com.user.service.dto.UserRequestDTO;
 import com.user.service.dto.UserResponseDTO;
-import com.user.service.entity.Users;
 import com.user.service.service.UserService;
+
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/register")
-    public ResponseEntity<UserResponseDTO> registerUser(@RequestBody UserRequestDTO users){
+    public ResponseEntity<UserResponseDTO> registerUser(@Valid @RequestBody UserRequestDTO users){
         return new ResponseEntity<>(userService.registerUser(users), HttpStatus.CREATED);
     }
 
@@ -29,12 +30,12 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<UserResponseDTO> getAllUsers(@PathVariable Long userId){
+    public ResponseEntity<UserResponseDTO> getUserById(@PathVariable Long userId){
         return new ResponseEntity<>(userService.getUserById(userId), HttpStatus.OK);
     }
 
     @GetMapping("/email")
-    public ResponseEntity<UserResponseDTO> getAllUsers(@RequestParam String email){
+    public ResponseEntity<UserResponseDTO> getUserByEmail(@RequestParam String email){
         return new ResponseEntity<>(userService.getByEmail(email), HttpStatus.OK);
     }
 
