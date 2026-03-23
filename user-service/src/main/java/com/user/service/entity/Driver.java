@@ -9,18 +9,21 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Users {
+public class Driver {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userId;
-    private String name;
+    private Long driverId;
+
     @Column(unique = true, nullable = false)
-    private String email;
+    private Long userId;
+
+    private String name;
     private String phoneNumber;
-    @Column(nullable = false)
-    private String password;
+    private String vehicleNumber;
+
     @Enumerated(EnumType.STRING)
-    private Role role;
+    private DriverStatus driverStatus;
 
     private Double currentLatitude;
     private Double currentLongitude;

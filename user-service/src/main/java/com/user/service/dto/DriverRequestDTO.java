@@ -1,7 +1,6 @@
 package com.user.service.dto;
 
-import com.user.service.entity.Role;
-import jakarta.validation.constraints.Email;
+import com.user.service.entity.DriverStatus;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -11,22 +10,22 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserRequestDTO {
+public class DriverRequestDTO {
+
+    @NotNull(message = "User ID is required")
+    private Long userId;
 
     @NotBlank(message = "Name is required")
     private String name;
 
-    @NotBlank(message = "Email is required")
-    @Email(message = "Email must be a valid email address")
-    private String email;
-
-    @NotBlank(message = "Password is required")
-    private String password;
-
+    @NotBlank(message = "Phone number is required")
     private String phoneNumber;
 
-    @NotNull(message = "Role is required")
-    private Role role;
+    @NotBlank(message = "Vehicle number is required")
+    private String vehicleNumber;
+
+    @NotNull(message = "Driver status is required")
+    private DriverStatus driverStatus;
 
     private Double currentLatitude;
     private Double currentLongitude;

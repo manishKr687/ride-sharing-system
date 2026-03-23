@@ -1,9 +1,10 @@
 package com.user.service.controller;
 
+import com.user.service.dto.AuthResponseDTO;
+import com.user.service.dto.LoginRequestDTO;
 import com.user.service.dto.UserRequestDTO;
 import com.user.service.dto.UserResponseDTO;
 import com.user.service.service.UserService;
-
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,32 +18,40 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 public class UserController {
+
     private final UserService userService;
 
     @PostMapping("/register")
-    public ResponseEntity<UserResponseDTO> registerUser(@Valid @RequestBody UserRequestDTO users){
-        return new ResponseEntity<>(userService.registerUser(users), HttpStatus.CREATED);
+    public ResponseEntity<AuthResponseDTO> registerUser(@Valid @RequestBody UserRequestDTO request) {
+        return new ResponseEntity<>(userService.registerUser(request), HttpStatus.CREATED);
     }
 
-    @GetMapping()
-    public ResponseEntity<List<UserResponseDTO>> getAllUsers(){
-        return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
+    @PostMapping("/login")
+    public ResponseEntity<AuthResponseDTO> login(@Valid @RequestBody LoginRequestDTO request) {
+        return ResponseEntity.ok(userService.login(request));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
+        return ResponseEntity.ok(userService.getAllUsers());
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<UserResponseDTO> getUserById(@PathVariable Long userId){
-        return new ResponseEntity<>(userService.getUserById(userId), HttpStatus.OK);
+    public ResponseEntity<UserResponseDTO> getUserById(@PathVariable Long userId) {
+        return ResponseEntity.ok(userService.getUserById(userId));
     }
 
     @GetMapping("/email")
-    public ResponseEntity<UserResponseDTO> getUserByEmail(@RequestParam String email){
-        return new ResponseEntity<>(userService.getByEmail(email), HttpStatus.OK);
+    public ResponseEntity<UserResponseDTO> getUserByEmail(@RequestParam String email) {
+        return ResponseEntity.ok(userService.getByEmail(email));
     }
 
     @PutMapping("/update-location/{userId}")
-    public ResponseEntity<String> updateLocation(@PathVariable Long userId, @RequestParam Double latitude, @RequestParam Double longitude){
+    public ResponseEntity<String> updateLocation(
+            @PathVariable Long userId,
+            @RequestParam Double latitude,
+            @RequestParam Double longitude) {
         userService.updateLocation(userId, latitude, longitude);
-        return ResponseEntity.ok("Location Updated");
+        return ResponseEntity.ok("Location updated");
     }
-
 }

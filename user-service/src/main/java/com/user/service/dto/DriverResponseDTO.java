@@ -1,6 +1,6 @@
 package com.user.service.dto;
 
-import com.user.service.entity.Role;
+import com.user.service.entity.DriverStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,12 +10,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserResponseDTO {
+public class DriverResponseDTO {
+    private Long driverId;
     private Long userId;
     private String name;
-    private String email;
     private String phoneNumber;
-    private Role role;
+    private String vehicleNumber;
+    private DriverStatus driverStatus;
     private Double currentLatitude;
     private Double currentLongitude;
 }

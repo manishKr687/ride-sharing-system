@@ -64,23 +64,6 @@ services:
     networks:
       - ride-sharing-network
 
-  driver-service:
-    build:
-      context: .
-      dockerfile: driver-service/Dockerfile
-    container_name: driver-service
-    ports:
-      - "7073:7073"
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/driver_service
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: postgres
-    depends_on:
-      postgres:
-        condition: service_healthy
-    networks:
-      - ride-sharing-network
-
   ride-service:
     build:
       context: .
@@ -93,7 +76,7 @@ services:
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-      SERVICES_DRIVER_SERVICE_BASE_URL: http://driver-service:7073
+      SERVICES_DRIVER_SERVICE_BASE_URL: http://user-service:7072
     depends_on:
       postgres:
         condition: service_healthy
@@ -165,6 +148,72 @@ services:
     networks:
       - ride-sharing-network
 
+  location-service:
+    build:
+      context: .
+      dockerfile: location-service/Dockerfile
+    container_name: location-service
+    ports:
+      - "7077:7077"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/location_service
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+    networks:
+      - ride-sharing-network
+
+  matching-service:
+    build:
+      context: .
+      dockerfile: matching-service/Dockerfile
+    container_name: matching-service
+    ports:
+      - "7078:7078"
+    environment:
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      DRIVER_SERVICE_URL: http://user-service:7072
+      RIDE_SERVICE_URL: http://ride-service:7071
+    depends_on:
+      kafka:
+        condition: service_started
+      user-service:
+        condition: service_started
+      ride-service:
+        condition: service_started
+    networks:
+      - ride-sharing-network
+
+  api-gateway:
+    build:
+      context: .
+      dockerfile: api-gateway/Dockerfile
+    container_name: api-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      USER_SERVICE_URL: http://user-service:7072
+      DRIVER_SERVICE_URL: http://user-service:7072
+      RIDE_SERVICE_URL: http://ride-service:7071
+      PAYMENT_SERVICE_URL: http://payment-service:7075
+      LOCATION_SERVICE_URL: http://location-service:7077
+    depends_on:
+      user-service:
+        condition: service_started
+      ride-service:
+        condition: service_started
+      payment-service:
+        condition: service_started
+      location-service:
+        condition: service_started
+    networks:
+      - ride-sharing-network
+
   frontend:
     build:
       context: ./frontend
@@ -172,6 +221,10 @@ services:
     container_name: frontend
     ports:
       - "5173:5173"
+    environment:
+      VITE_GATEWAY_URL: http://localhost:8080
+    depends_on:
+      - api-gateway
     networks:
       - ride-sharing-network
 

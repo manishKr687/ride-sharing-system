@@ -1,9 +1,7 @@
 package com.user.service.dto;
 
-import com.user.service.entity.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,10 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserRequestDTO {
-
-    @NotBlank(message = "Name is required")
-    private String name;
+public class LoginRequestDTO {
 
     @NotBlank(message = "Email is required")
     @Email(message = "Email must be a valid email address")
@@ -22,12 +17,4 @@ public class UserRequestDTO {
 
     @NotBlank(message = "Password is required")
     private String password;
-
-    private String phoneNumber;
-
-    @NotNull(message = "Role is required")
-    private Role role;
-
-    private Double currentLatitude;
-    private Double currentLongitude;
 }
