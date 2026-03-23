@@ -20,8 +20,8 @@ public class Invoice {
     private Long id;
 
     private Long paymentId;
-    private String rideId;
-    private String userId;
+    private Long rideId;
+    private Long userId;
     private Double amount;
     private String status;
     private LocalDateTime createdAt;

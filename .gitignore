@@ -18,3 +18,5 @@ application.yml
 # Kafka and Zookeeper logs
 *.log
 *.lock
+
+*.md

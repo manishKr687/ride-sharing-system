@@ -11,8 +11,8 @@ import lombok.NoArgsConstructor;
 @Builder
 public class PaymentEvent {
     private Long paymentId;
-    private String userId;
-    private String rideId;
+    private Long userId;
+    private Long rideId;
     private String status;
     private Double amount;
     private String message;

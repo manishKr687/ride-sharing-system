@@ -18,7 +18,7 @@ public class Payment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long paymentId;
 
-    private String rideId;
-    private String userId;
+    private Long rideId;
+    private Long userId;
     private Double amount;
 }

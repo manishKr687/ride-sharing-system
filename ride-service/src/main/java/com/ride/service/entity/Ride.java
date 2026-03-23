@@ -14,12 +14,18 @@ public class Ride {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long rideId;
-    private String userId;
-    private String driverId;
+    @Column(nullable = false)
+    private Long userId;
+    @Column(nullable = true)
+    private Long driverId;
+    @Column(nullable = false, length = 500)
     private String pickupLocation;
+    @Column(nullable = false, length = 500)
     private String dropLocation;
+
     private LocalDateTime startTime;
     private LocalDateTime endTime;
+    
     @Enumerated(EnumType.STRING)
     private RideStatus status;
 

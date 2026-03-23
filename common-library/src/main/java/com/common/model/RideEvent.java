@@ -11,8 +11,8 @@ import lombok.NoArgsConstructor;
 @Builder
 public class RideEvent {
     private Long rideId;
-    private String userId;
-    private String driverId;
+    private Long userId;
+    private Long driverId;
     private String status;  // REQUESTED, ACCEPTED, COMPLETED
     private String message;
 }
